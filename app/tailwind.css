@@ -10,3 +10,25 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Add styles for Oportunidades section */
+.oportunidades-section {
+  @apply bg-gray-100 py-12;
+}
+
+.oportunidad-card {
+  @apply bg-white p-6 rounded-lg shadow-md;
+}
+
+.oportunidad-image {
+  @apply w-full h-64 object-cover mb-4; /* Adjust height to make images more square */
+}
+
+.oportunidad-link {
+  @apply text-blue-500 hover:underline mt-4 block;
+}
+
+/* Custom text color */
+.text-custom-color {
+  @apply text-black;
+}
