@@ -31,3 +31,25 @@ body {
 .login-button {
   @apply w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700;
 }
+
+:root {
+  --custom-color: #FAA307;
+}
+
+.text-custom-color {
+  color: var(--custom-color);
+}
+
+.bg-custom-color {
+  background-color: var(--custom-color);
+}
+
+@layer components {
+  .text-welcome {
+    @apply font-poppins font-medium text-2xl leading-[136%] tracking-normal text-black;
+  }
+
+  .text-bank {
+    @apply font-poppins font-extrabold text-4xl leading-[136%] tracking-normal text-[#00266B];
+  }
+}

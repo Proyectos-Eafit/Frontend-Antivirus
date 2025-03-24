@@ -37,7 +37,8 @@ export default function FormLogin() {
         <img src={loginImage} alt="Login" className="w-3/4 md:w-full" />
       </div>
       <div className="md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center mb-8">Banco de Oportunidades</h2>
+        <h1 className="text-welcome">Bienvenido a tu</h1>
+        <h2 className="text-bank">Banco de Oportunidades</h2>
         <Form method="post">
           <div className="mb-4">
             <label htmlFor="email" className="block text-gray-700">Email</label>
@@ -61,21 +62,21 @@ export default function FormLogin() {
           </div>
           {actionData?.error && <p className="text-red-500 mb-4">{actionData.error}</p>}
           <div className="flex items-center justify-between mb-4">
-            <label className="flex items-center">
+            <label className="flex items-center text-black">
               <input type="checkbox" className="mr-2" name="remember" />
               Recordarme
             </label>
-            <a href="#" className="text-blue-500 hover:underline">Olvidé mi contraseña</a>
+            <a href="#" className="text-custom-color hover:underline">Olvidé mi contraseña</a>
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+            className="w-full bg-custom-color text-white py-2 px-4 rounded hover:bg-custom-color"
           >
             Login
           </button>
         </Form>
         <p className="text-center mt-4">
-          ¿No tienes una cuenta? <a href="/registro" className="text-blue-500 hover:underline">Regístrate</a>
+          ¿No tienes una cuenta? <a href="/registro" className="text-custom-color hover:underline">Regístrate</a>
         </p>
       </div>
     </div>
