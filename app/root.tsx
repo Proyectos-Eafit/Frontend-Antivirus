@@ -1,12 +1,8 @@
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
-
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { tokenCookie } from "~/utils/cookies";
 import "./tailwind.css";
 import { lazy, Suspense } from "react";
 import LoadingComponent from "./components/Loading.component";
@@ -26,7 +22,16 @@ export const links: LinksFunction = () => [
   },
 ];
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const cookieHeader = request.headers.get("Cookie");
+  const token = await tokenCookie.parse(cookieHeader);
+  return json({ isAuthenticated: !!token });
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const data = useLoaderData<{ isAuthenticated?: boolean }>() || {};
+  const isAuthenticated = data.isAuthenticated ?? false;
+
   return (
     <html lang="en">
       <head>
@@ -37,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-[#fafafa]">
         <Suspense fallback={<LoadingComponent />}>
-          <Navbar />
+          <Navbar isAuthenticated={isAuthenticated} />
         </Suspense>
         {children}
         <ScrollRestoration />
