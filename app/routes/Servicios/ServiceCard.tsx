@@ -18,14 +18,14 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   return (
     <div className="bg-white shadow-md rounded-md overflow-hidden border border-gray-100 flex flex-col h-full">
-      <div className="h-44 overflow-hidden">
+      <div className="overflow-hidden">
         <img 
           src={imageSrc} 
           alt={title} 
           className="w-full h-full object-cover"
         />
       </div>
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-8 flex flex-col flex-grow">
         <h3 className="text-lg font-semibold text-indigo-900 mb-2">{title}</h3>
         <p className="text-gray-600 text-sm mb-4 flex-grow">{description}</p>
         <div className="text-center mt-auto">
