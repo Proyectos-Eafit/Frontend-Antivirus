@@ -19,7 +19,7 @@ export default function Navbar() {
             <Link to="#servicios">Servicio</Link>
           </li>
           <li>
-            <Link to="/novedades">Novedades</Link>
+            <Link to={"/novedades"}>Novedades</Link>
           </li>
         </ul>
         <div className="w-2/12 flex justify-center z-10">
