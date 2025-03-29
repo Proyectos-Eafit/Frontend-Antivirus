@@ -1,6 +1,7 @@
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { tokenCookie } from "app/utils/cookies";
+import { login } from "~/services/authService";
 import loginImage from "../../assets/images/login.svg";
 
 // Action function para validar y guardar la cookie del token
@@ -13,19 +14,18 @@ export const action = async ({ request }: { request: Request }) => {
     return json({ error: "Todos los campos son obligatorios" }, { status: 400 });
   }
 
-  const response = await fetch("http://localhost:5281/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!response.ok) {
-    return json({ error: "Credenciales incorrectas" }, { status: 401 });
+  try {
+    const data = await login(email.toString(), password.toString());
+    const token = data.token.replace(/['"]+/g, "");
+    return redirect("/novedades", {
+      headers: {
+        "Set-Cookie": await tokenCookie.serialize(token),
+      },
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Error de conexión con la API";
+    return json({ error: errorMessage }, { status: 500 });
   }
-  const data = await response.json();
-  const token = data.token.replace(/['"]+/g, "");
-  return redirect("/admin", {
-    headers: { "Set-Cookie": await tokenCookie.serialize(token) },
-  });
 };
 
 export default function FormLogin() {

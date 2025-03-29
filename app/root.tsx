@@ -24,7 +24,8 @@ export const links: LinksFunction = () => [
 
 export const loader: LoaderFunction = async ({ request }) => {
   const cookieHeader = request.headers.get("Cookie");
-  const token = await tokenCookie.parse(cookieHeader);
+  const token = (await tokenCookie.parse(cookieHeader)) || null;
+
   return json({ isAuthenticated: !!token });
 };
 

@@ -1,8 +1,10 @@
+import Novedades from "~/components/Novedades";
 
-export default function novedadesLayout(){
+export default function NovedadesRoute() {
   return (
     <div>
-      <h2>Pagina principal novedades</h2>
+      <h1 className="text-4xl font-bold text-center my-8 text-custom-color">Novedades</h1>
+      <Novedades />
     </div>
-  )
+  );
 }

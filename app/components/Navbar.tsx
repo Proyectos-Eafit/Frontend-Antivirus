@@ -44,7 +44,7 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
           ) : (
             <>
               <li>
-                <Link to="/ingreso">
+                <Link to="/ingreso" onClick={(e) => e.preventDefault()}>
                   <img className="w-36" src={btnLogin} alt="btn" />
                 </Link>
               </li>
