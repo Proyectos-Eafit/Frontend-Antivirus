@@ -14,15 +14,27 @@ export default function Carousel() {
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay]}
-      spaceBetween={50}
-      slidesPerView={1}
+      spaceBetween={-30}
+      slidesPerView={1.5}
+      centeredSlides={true}
+      loop={true}
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 3000 }}
+      // autoplay={{ delay: 3000 }}
+      className="w-full max-w-screen-md"
     >
       {images.map((src, index) => (
-        <SwiperSlide key={index}>
-          <img src={src} alt={`Slide ${index + 1}`} className="w-2/5 px-30 bg-black h-auto" />
+        <SwiperSlide
+          key={index}
+          className="flex justify-center items-center transition-transform duration-300"
+        >
+          <div className="flex justify-center items-center w-full h-96">
+            <img
+              src={src}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-cover rounded-lg transition-transform duration-300 scale-90 swiper-slide-active:scale-100"
+            />
+          </div>
         </SwiperSlide>
       ))}
     </Swiper>
