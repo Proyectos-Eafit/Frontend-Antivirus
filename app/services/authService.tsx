@@ -19,6 +19,7 @@ export async function login(correo: string, password: string): Promise<{ token: 
     return await response.json();
   } catch (error) {
     console.error("Error en la solicitud de inicio de sesión:", error);
-    throw new Error("Error de conexión con la API");
+    // Repropaga el error original para mantener el mensaje
+    throw error;
   }
 }

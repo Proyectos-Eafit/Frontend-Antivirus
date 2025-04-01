@@ -15,7 +15,9 @@ export const action = async ({ request }: { request: Request }) => {
   }
 
   try {
-    const data = await login(email.toString(), password.toString());
+    // Convierte el correo a minúsculas
+    const normalizedEmail = email.toString().toLowerCase();
+    const data = await login(normalizedEmail, password.toString());
     const token = data.token.replace(/['"]+/g, "");
     return redirect("/novedades", {
       headers: {
@@ -76,7 +78,7 @@ export default function FormLogin() {
           </button>
         </Form>
         <p className="text-center mt-4">
-          ¿No tienes una cuenta? <a href="/registro" className="text-custom-color hover:underline">Regístrate</a>
+          <span className="text-black">¿No tienes una cuenta?</span> <a href="/registro" className="text-custom-color hover:underline">Regístrate</a>
         </p>
       </div>
     </div>
