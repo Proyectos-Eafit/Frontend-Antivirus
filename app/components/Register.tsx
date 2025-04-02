@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { EyeIcon, EyeSlashIcon, UserIcon, CalendarIcon, EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { FaGoogle, FaFacebook, FaCheck } from "react-icons/fa";
 import airplaneRegister from "../assets/images/airplaneRegister.png";
+import axios from "axios";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ export default function Register() {
     setErrors({ ...errors, [name]: false });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const newErrors = {
@@ -49,17 +50,44 @@ export default function Register() {
       return;
     }
 
-    console.log("Formulario enviado:", formData);
+    const payload = {
+      id: 0,
+      name: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      dateBirth: new Date(formData.birthDate).toISOString().split("T")[0],
+    };
+
+    try {
+      const response = await axios.post("http://localhost:5281/api/auth/register", payload);
+
+      if (response.status === 200 && response.data.message) {
+        console.log("Usuario registrado:", response.data);
+        alert(response.data.message);
+      } else {
+        alert("Hubo un problema al registrar el usuario.");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.error("Error en la respuesta del backend:", error.response.data);
+        alert(`Error: ${error.response.data.message || "Hubo un problema al registrar el usuario"}`);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del backend:", error.request);
+        alert("No se pudo conectar con el servidor. Verifica tu conexión.");
+      } else {
+        console.error("Error al configurar la solicitud:", error.message);
+        alert("Ocurrió un error inesperado. Intenta nuevamente.");
+      }
+    }
   };
 
   return (
     <section className="register-section flex flex-col items-center justify-center min-h-screen p-[5%]">
-      {/* Contenedor principal para el formulario y la imagen */}
       <div className="flex flex-col md:flex-row items-center justify-center w-full h-full">
-        {/* Sección del formulario */}
         <div className="w-full md:w-2/5 bg-white p-8 rounded shadow-2xl mb-8 md:mb-0 md:mr-4 min-h-[700px] flex items-center justify-center">
           <form onSubmit={handleSubmit} className="w-full p-4">
-            <h1 className="text-2xl font-bold text-center mb-6 text-black">
+          <h1 className="text-2xl font-bold text-center mb-6 text-black">
               ¿Listo para encontrar tu próxima <span className="text-[#2C395B]">oportunidad?</span> <span className="wave">👋</span>
             </h1>
 
@@ -86,145 +114,117 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Campos del formulario */}
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                placeholder=" "
-                value={formData.firstName}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.firstName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="firstName"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <UserIcon className="h-6 w-6 text-blue-500" /> Nombre
-              </label>
-            </div>
+            <div className="relative mb-4 flex items-center">
+            <UserIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              placeholder="Nombre"
+              value={formData.firstName}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.firstName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+          </div>
 
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                placeholder=" "
-                value={formData.lastName}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.lastName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="lastName"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <UserIcon className="h-6 w-6 text-blue-500" /> Apellido
-              </label>
-            </div>
+          <div className="relative mb-4 flex items-center">
+            <UserIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Apellido"
+              value={formData.lastName}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.lastName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+          </div>
 
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type="date"
-                id="birthDate"
-                name="birthDate"
-                value={formData.birthDate}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.birthDate ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="birthDate"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <CalendarIcon className="h-6 w-6 text-blue-500" /> Fecha de Nacimiento
-              </label>
-            </div>
+          <div className="relative mb-4 flex items-center">
+            <CalendarIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type="date"
+              id="birthDate"
+              name="birthDate"
+              placeholder="Fecha de Nacimiento"
+              value={formData.birthDate}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.birthDate ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+          </div>
 
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder=" "
-                value={formData.email}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.email ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="email"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <EnvelopeIcon className="h-6 w-6 text-blue-500" /> Correo Electrónico
-              </label>
-            </div>
+          <div className="relative mb-4 flex items-center">
+            <EnvelopeIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Correo Electrónico"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.email ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+          </div>
 
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                name="password"
-                placeholder=" "
-                value={formData.password}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.password ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="password"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <LockClosedIcon className="h-6 w-6 text-blue-500" /> Contraseña
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
-              >
-                {showPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
-              </button>
-            </div>
+          <div className="relative mb-4 flex items-center">
+            <LockClosedIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              placeholder="Contraseña"
+              value={formData.password}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.password ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
+            >
+              {showPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
+            </button>
+          </div>
 
-            <div className="relative mb-4 overflow-hidden">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder=" "
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className={`peer w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
-                required
-              />
-              <label
-                htmlFor="confirmPassword"
-                className="absolute left-3 top-3 text-gray-500 text-base flex items-center gap-2 transition-all peer-placeholder-shown:top-3 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-lg peer-focus:top-0 peer-focus:text-blue-500 peer-focus:text-sm"
-              >
-                <LockClosedIcon className="h-6 w-6 text-blue-500" /> Confirmar Contraseña
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
-              >
-                {showConfirmPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
-              </button>
-            </div>
+          <div className="relative mb-4 flex items-center">
+            <LockClosedIcon className="h-6 w-6 text-gray-500 mr-3" />
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirmar Contraseña"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
+            >
+              {showConfirmPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
+            </button>
+          </div>
+
+            
 
             <button
               type="submit"
@@ -235,15 +235,15 @@ export default function Register() {
           </form>
         </div>
 
-{/* Imagen */}
-<div className="flex justify-center items-center h-[700px]"> 
-  <img
-    src={airplaneRegister}
-    alt="Airplane"
-    className="max-w-full h-full object-contain"
-  />
-</div>
+        {/* Imagen */}
+        <div className="flex justify-center items-center h-[700px]"> 
+          <img
+            src={airplaneRegister}
+            alt="Airplane"
+            className="max-w-full h-full object-contain"
+          />
         </div>
+      </div>
 
       {/* Sección de beneficios */}
       <div className="w-full py-8 px-4">

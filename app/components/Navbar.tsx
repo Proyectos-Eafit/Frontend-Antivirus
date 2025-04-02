@@ -1,9 +1,11 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react"; 
 import logo from "../assets/images/logo.svg";
-import btnLogin from '../assets/images/btnLogin.svg'
-import btnRegister from '../assets/images/btnRegister.svg'
+import btnLogin from '../assets/images/btnLogin.svg';
+import btnRegister from '../assets/images/btnRegister.svg';
 
 export default function Navbar() {
+  const location = useLocation(); 
+
   return (
     <div>
       <nav className="relative flex ">
@@ -23,22 +25,22 @@ export default function Navbar() {
           </li>
         </ul>
         <div className="w-2/12 flex justify-center z-10">
-        
           <img className="w-28" src={logo} alt="logo" />
         </div>
         <ul className="flex text-[#1D1854] text- w-5/12 justify-evenly items-center z-10">
           <li>
             <Link to="/ingreso">
-                <img className="w-36" src={btnLogin} alt="btn" />
-                
+              <img className="w-36" src={btnLogin} alt="btn" />
             </Link>
           </li>
-          <li>
-            <Link to="/registro">
+          {/* Oculta el botón de registro si estás en la página de registro */}
+          {location.pathname !== "/registro" && (
+            <li>
+              <Link to="/registro">
                 <img className="w-40" src={btnRegister} alt="btn" />
-                
-            </Link>
-          </li>
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
     </div>
