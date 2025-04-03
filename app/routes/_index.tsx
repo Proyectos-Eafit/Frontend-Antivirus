@@ -1,4 +1,5 @@
 import { Outlet } from "@remix-run/react";
+import Oportunidades from "../components/Oportunidades";
 
 export default function Index() {
   return (
@@ -6,6 +7,7 @@ export default function Index() {
       <div>
         <Outlet />
       </div>
+      <Oportunidades />
     </div>
   );
 }
