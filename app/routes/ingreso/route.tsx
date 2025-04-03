@@ -1,10 +1,11 @@
-import FormLogin from "./formLogin";
+import FormLogin, { action as formLoginAction } from "./formLogin";
 
-export default function ingresoLayout(){
+export const action = formLoginAction;
+
+export default function ingresoLayout() {
   return (
     <div>
-      <h2>Pagina principal ingreso</h2>
-      <FormLogin/>
+      <FormLogin />
     </div>
-  )
+  );
 }

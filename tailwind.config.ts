@@ -8,6 +8,7 @@ export default {
         sans: [
           "Raleway"
         ],
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },
