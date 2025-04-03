@@ -1,7 +1,9 @@
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import Cards from "~/components/Cards"
-import Carousel from "~/components/CarouselNovedades"
+import Cards from "~/components/Cards";
+import Carousel from "~/components/CarouselNovedades";
+import Filter from "~/components/Filter";
+import FilterSearch from "~/components/FilterSearch";
 
 type CardProps = {
   image: string;
@@ -30,24 +32,57 @@ export const loader: LoaderFunction = async () => {
   return json(cards);
 };
 
-export default function novedadesLayout(){
+export default function novedadesLayout() {
   return (
     <div className="text-gray-800 flex flex-col items-center justify-center min-h-screen text-center">
       <h1 className="text-[#1D1856] text-4xl font-bold">Novedades</h1>
       <div className="max-w-screen-md w-full">
-      <Carousel></Carousel>
+        <Carousel></Carousel>
       </div>
-      <h2>Barra busqueda</h2>
-      <h2 className="text-[#1D1856] text-2xl font-bold">¡Oportunidades para estudiar!</h2>
-      <Cards 
-        image={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"}
-        title={"Test"}
-        description={"Esta es una descripción de prueba para esta tarjeta"}
-        buttonLink={"https://remix.run/docs/en/main/components/form"}>
 
-      </Cards>
+      <FilterSearch>    
+      </FilterSearch>
+
+      <h2 className="text-[#1D1856] text-2xl font-bold">
+        ¡Oportunidades para estudiar!
+      </h2>
+
+      <div className="grid grid-cols-2 gap-8 p-5">
+        <Cards
+          image={
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"
+          }
+          title={"Test"}
+          description={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse quis blandit elit. Curabitur sed nunc mauris. Mauris tempor quis diam a consequat. Integer varius turpis eu sapien dignissim condimentum. Donec ultrices mi eget magna posuere, quis placerat ligula aliquam. Duis cursus dolor quis tellus vehicula sollicitudin at ut mi. Integer non turpis nunc. Fusce sit amet varius mauris, eget facilisis urna. Etiam nec dui vestibulum, condimentum neque et, fringilla ipsum. Nulla pharetra non purus et luctus. Mauris pellentesque ultrices justo vel ultricies. Proin dignissim risus eget nibh suscipit volutpat. Aliquam a suscipit diam. Pellentesque ultricies sem et iaculis ultricies. Proin laoreet nunc vel elit porta posuere. Donec in ante vel purus porta fermentum."}
+          buttonLink={"https://remix.run/docs/en/main/components/form"}
+        ></Cards>
+        <Cards
+          image={
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"
+          }
+          title={"Test"}
+          description={"Esta es una descripción de prueba para esta tarjeta"}
+          buttonLink={"https://remix.run/docs/en/main/components/form"}
+        ></Cards>
+        <Cards
+          image={
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"
+          }
+          title={"Test"}
+          description={"Esta es una descripción de prueba para esta tarjeta"}
+          buttonLink={"https://remix.run/docs/en/main/components/form"}
+        ></Cards>
+        <Cards
+          image={
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"
+          }
+          title={"Test"}
+          description={"Esta es una descripción de prueba para esta tarjeta"}
+          buttonLink={"https://remix.run/docs/en/main/components/form"}
+        ></Cards>
+      </div>
       {/* <Cards></Cards>
       <Cards></Cards> */}
     </div>
-  )
+  );
 }
