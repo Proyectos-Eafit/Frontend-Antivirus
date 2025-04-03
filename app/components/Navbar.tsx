@@ -3,6 +3,10 @@ import logo from "../assets/images/logo.svg";
 import btnLogin from '../assets/images/btnLogin.svg';
 import btnRegister from '../assets/images/btnRegister.svg';
 
+interface NavbarProps {
+  isAuthenticated: boolean;
+}
+
 export default function Navbar({ isAuthenticated }: NavbarProps) {
   const location = useLocation(); // Obtiene la ruta actual
 
