@@ -20,8 +20,8 @@ export default function Carousel() {
       loop={true}
       navigation
       pagination={{ clickable: true }}
-      // autoplay={{ delay: 3000 }}
-      className="w-full max-w-screen-md"
+      autoplay={{ delay: 3000 }}
+      className="w-full max-w-screen-xl"
     >
       {images.map((src, index) => (
         <SwiperSlide
@@ -32,7 +32,7 @@ export default function Carousel() {
             <img
               src={src}
               alt={`Slide ${index + 1}`}
-              className="w-full h-full object-cover rounded-lg transition-transform duration-300 scale-90 swiper-slide-active:scale-100"
+              className="w-full h-full object-cover rounded-3xl shadow-lg shadow-gray-400 transition-transform duration-300 scale-90 swiper-slide-active:scale-100"
             />
           </div>
         </SwiperSlide>

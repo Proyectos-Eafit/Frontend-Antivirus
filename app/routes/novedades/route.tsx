@@ -2,7 +2,6 @@ import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Cards from "~/components/Cards";
 import Carousel from "~/components/CarouselNovedades";
-import Filter from "~/components/Filter";
 import FilterSearch from "~/components/FilterSearch";
 
 type CardProps = {
@@ -34,20 +33,21 @@ export const loader: LoaderFunction = async () => {
 
 export default function novedadesLayout() {
   return (
-    <div className="text-gray-800 flex flex-col items-center justify-center min-h-screen text-center">
-      <h1 className="text-[#1D1856] text-4xl font-bold">Novedades</h1>
-      <div className="max-w-screen-md w-full">
+    <div className="text-gray-800 flex flex-col items-center justify-center text-center">
+      <h1 className="text-[#1D1856] text-[70px] font-bold">Novedades</h1>
+      {/* <div className="max-w-screen-md w-full"> */}
+      <div>
         <Carousel></Carousel>
       </div>
 
       <FilterSearch>    
       </FilterSearch>
 
-      <h2 className="text-[#1D1856] text-2xl font-bold">
+      <h2 className="text-[#1D1856] text-[52px] font-bold">
         ¡Oportunidades para estudiar!
       </h2>
 
-      <div className="grid grid-cols-2 gap-8 p-5">
+      <div className="grid grid-cols-2 gap-8 py-12">
         <Cards
           image={
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6JuA2EignVtaNyNT7aemS1KaAqTsFznx1jA&s"
