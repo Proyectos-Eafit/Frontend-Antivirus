@@ -1,7 +1,9 @@
-export default function registroLayout() {
+import Register from "~/components/Register";
+
+export default function RegistroPage() {
   return (
-    <div >
-      <h2>Pagina principal registro</h2>
+    <div>
+      <Register />
     </div>
   );
 }

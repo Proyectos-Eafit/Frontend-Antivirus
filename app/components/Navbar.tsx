@@ -1,13 +1,11 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react"; 
 import logo from "../assets/images/logo.svg";
 import btnLogin from '../assets/images/btnLogin.svg';
 import btnRegister from '../assets/images/btnRegister.svg';
 
-interface NavbarProps {
-  isAuthenticated: boolean;
-}
-
 export default function Navbar({ isAuthenticated }: NavbarProps) {
+  const location = useLocation(); // Obtiene la ruta actual
+
   return (
     <div>
       <nav className="relative flex">
