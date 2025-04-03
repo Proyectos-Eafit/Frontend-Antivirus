@@ -6,6 +6,7 @@ import { tokenCookie } from "~/utils/cookies";
 import "./tailwind.css";
 import { lazy, Suspense } from "react";
 import LoadingComponent from "./components/Loading.component";
+import HeroSection from "./components/HeroSection";
 const Navbar = lazy(() => import("./components/Navbar"));
 const Footer = lazy(() => import("./components/Footer"));
 
@@ -45,6 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Suspense fallback={<LoadingComponent />}>
           <Navbar isAuthenticated={isAuthenticated} />
         </Suspense>
+        <HeroSection />
         {children}
         <ScrollRestoration />
         <Scripts />
