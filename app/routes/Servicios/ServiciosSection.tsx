@@ -10,9 +10,9 @@ export default function ServiciosSection() {
       { id: 1, title: "Pre-vocación", description: "Un programa diseñado para estudiantes que están explorando sus intereses y habilidades. Ayudamos a los jóvenes a descubrir sus talentos y posibles caminos profesionales.", imageSrc: "app/assets/images/ATV3.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
       { id: 2, title: "Asesoría sociopsedagógica", description: "Ofrecemos apoyo personalizado para estudiantes que enfrentan dificultades en su proceso de aprendizaje. Nuestros expertos trabajan en el desarrollo integral del estudiante.", imageSrc: "app/assets/images/ATV2.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
       { id: 3, title: "Test sociovocacional", description: "Evaluaciones diseñadas para identificar intereses, aptitudes y preferencias de los estudiantes. Los resultados ayudan a tomar decisiones informadas sobre su futuro académico.", imageSrc: "app/assets/images/ATV1.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
-      { id: 4, title: "Taller 1", description: "Talleres", imageSrc: "app/assets/images/ATV3.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
-      { id: 5, title: "Taller 2", description: "Talleres", imageSrc: "app/assets/images/ATV1.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
-      { id: 6, title: "Taller 3", description: "Talleres", imageSrc: "app/assets/images/ATV2.jpg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
+      { id: 4, title: "Exploración vocacional", description: "Descubre tus habilidades e intereses a través de experiencias prácticas y actividades diseñadas para orientarte en tu camino profesional.", imageSrc: "app/assets/images/ATV8.jpeg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
+      { id: 5, title: "Desarrollo de habilidades", description: "Fortalece tus competencias personales y académicas con talleres interactivos que te prepararán para enfrentar nuevos desafíos.", imageSrc: "app/assets/images/ATV5.jpeg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
+      { id: 6, title: "Orientación académica", description: "Recibe asesoramiento para tomar decisiones informadas sobre tu futuro académico, explorando distintas opciones de formación y crecimiento.", imageSrc: "app/assets/images/ATV6.jpeg", linkText: "LO QUIERO", linkUrl: "/ingreso" },
     ],
     []
   );
