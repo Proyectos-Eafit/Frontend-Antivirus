@@ -13,6 +13,7 @@
     "types": ["@remix-run/node", "vite/client"],
     "isolatedModules": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true, // Agregado
     "jsx": "react-jsx",
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -26,8 +27,6 @@
     "paths": {
       "~/*": ["./app/*"]
     },
-
-    // Vite takes care of building everything, not tsc.
     "noEmit": true
   }
 }

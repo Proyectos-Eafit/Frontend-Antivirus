@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -20,6 +20,7 @@ export default function FormLogin() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Cargar credenciales guardadas si "Recordar" está activado
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function FormLogin() {
       [name]: type === "checkbox" ? checked : value,
     });
     setErrors({ ...errors, [name]: false });
+    setErrorMessage(null); // Limpia el mensaje de error al cambiar los campos
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,19 +63,22 @@ export default function FormLogin() {
     setLoading(true);
 
     try {
+      console.log("Datos enviados:", formData); // Verifica los datos enviados
+
       const response = await axios.post("http://localhost:5281/api/auth/login", {
         email: formData.email,
         password: formData.password,
       });
 
-      if (response.status === 200 && response.data.token) {
-        console.log("Inicio de sesión exitoso:", response.data);
-        alert("Inicio de sesión exitoso");
+      console.log("Respuesta de la API:", response.data); // Verifica la respuesta de la API
 
-        // Guarda el token en las cookies con una duración de 20 minutos
+      if (response.status === 200 && response.data.token) {
+        console.log("Token recibido:", response.data.token); // Verifica el token recibido
+
+        // Inicio de sesión exitoso
         Cookies.set("token", response.data.token, { expires: 1 / 72 }); // 20 minutos
 
-        // Si "Recordar" está activado, guarda las credenciales en localStorage
+        // Guarda las credenciales si "Recordar" está activado
         if (formData.remember) {
           localStorage.setItem("email", formData.email);
           localStorage.setItem("password", formData.password);
@@ -85,18 +90,20 @@ export default function FormLogin() {
         // Redirige al usuario a la página de novedades
         navigate("/novedades");
       } else {
-        alert("Hubo un problema al iniciar sesión.");
+        setErrorMessage("Hubo un problema al iniciar sesión.");
       }
     } catch (error: any) {
+      console.error("Error completo:", error); // Log completo del error
+
       if (error.response) {
-        console.error("Error en la respuesta del backend:", error.response.data);
-        alert(`Error: ${error.response.data.message || "Credenciales incorrectas"}`);
+        console.error("Error en la respuesta:", error.response.data); // Detalles de la respuesta
+        setErrorMessage(error.response.data.message || "Credenciales incorrectas");
       } else if (error.request) {
-        console.error("No se recibió respuesta del backend:", error.request);
-        alert("No se pudo conectar con el servidor. Verifica tu conexión.");
+        console.error("Error en la solicitud:", error.request); // Detalles de la solicitud
+        setErrorMessage("No se pudo conectar con el servidor. Verifica tu conexión.");
       } else {
-        console.error("Error al configurar la solicitud:", error.message);
-        alert("Ocurrió un error inesperado. Intenta nuevamente.");
+        console.error("Error desconocido:", error.message); // Otros errores
+        setErrorMessage("Ocurrió un error inesperado. Intenta nuevamente.");
       }
     } finally {
       setLoading(false);
@@ -146,6 +153,11 @@ export default function FormLogin() {
                 <div className="flex-grow border-t border-gray-300"></div>
               </div>
             </div>
+
+            {/* Mensaje de error */}
+            {errorMessage && (
+              <p className="text-red-500 text-center mb-4">{errorMessage}</p>
+            )}
 
             {/* Campos del formulario */}
             <div className="relative mb-4 flex items-center">

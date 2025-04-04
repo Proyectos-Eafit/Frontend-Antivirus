@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon, UserIcon, CalendarIcon, EnvelopeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import { FaGoogle, FaFacebook, FaCheck } from "react-icons/fa";
 import airplaneRegister from "../assets/images/airplaneRegister.png";

@@ -4,5 +4,5 @@ export const tokenCookie = createCookie("token", {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax",
-  path: "/", // Cambia el path para que sea accesible desde todas las rutas
+  path: "/",
 });
