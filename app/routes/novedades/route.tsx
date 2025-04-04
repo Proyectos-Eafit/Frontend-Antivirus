@@ -1,3 +1,4 @@
+
 import { LoaderFunction, json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useState } from "react";
@@ -117,3 +118,4 @@ export default function NovedadesLayout() {
     </div>
   );
 }
+
