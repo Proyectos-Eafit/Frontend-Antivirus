@@ -14,7 +14,7 @@ export default function Card({
   buttonLink,
 }: CardProps) {
   return (
-    <div className="bg-white shadow-lg rounded-sm w-96 h-80 overflow-hidden text-center flex flex-col">
+    <div className="bg-white shadow-lg rounded-sm w-[450px] h-80 overflow-hidden text-center flex flex-col">
       <img
         src={image}
         alt={title}
@@ -27,7 +27,7 @@ export default function Card({
             to={buttonLink}
             className="mt-2 inline-block text-[#1D1854] py-1 px-6 border border-[#1D1854] rounded-full hover:bg-[#1D1854] hover:text-white transition"
           >
-            Guardar
+            Abrir
           </Link>
         </div>
         <div className="mt-3 h-[60px] text-gray-600 text-sm text-pretty truncate">
