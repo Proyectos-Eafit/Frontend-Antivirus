@@ -24,12 +24,14 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
           <li>
             <Link to="#servicios">Servicio</Link>
           </li>
+
           {/* Mostrar "Novedades" solo si no estás en Inicio, Ingresar o Servicios */}
           {location.pathname !== "/" && location.pathname !== "/ingreso" && location.pathname !== "/registro" && (
             <li>
               <Link to="/novedades">Novedades</Link>
             </li>
           )}
+
         </ul>
         <div className="w-2/12 flex justify-center z-10">
           <img className="w-28" src={logo} alt="logo" />
