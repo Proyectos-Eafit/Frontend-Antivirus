@@ -4,6 +4,7 @@
  * @param {string} password - Contraseña del usuario.
  * @returns {Promise<Object>} - Datos del usuario autenticado.
  */
+/*
 export async function login(correo: string, password: string): Promise<{ token: string }> {
   try {
     const response = await fetch("http://localhost:5281/api/auth/login", {
@@ -23,3 +24,4 @@ export async function login(correo: string, password: string): Promise<{ token: 
     throw error;
   }
 }
+*/

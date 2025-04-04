@@ -45,12 +45,14 @@ export default function Navbar({ isAuthenticated }: NavbarProps) {
             </>
           ) : (
             <>
-              <li>
+              {/* Botón de "Ingresar" */}
+              <li className={`mr-16 ${location.pathname === "/ingreso" ? "invisible" : ""}`}>
                 <Link to="/ingreso">
                   <img className="w-40" src={btnLogin} alt="btn" />
                 </Link>
               </li>
-              <li>
+              {/* Botón de "Registrar" */}
+              <li className={`ml-16 ${location.pathname === "/registro" ? "invisible" : ""}`}>
                 <Link to="/registro">
                   <img className="w-40" src={btnRegister} alt="btn" />
                 </Link>

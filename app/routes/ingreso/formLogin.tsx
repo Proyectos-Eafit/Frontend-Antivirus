@@ -1,11 +1,13 @@
-import { json, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
-import { tokenCookie } from "app/utils/cookies";
-import { login } from "~/services/authService";
+// import { json, redirect } from "@remix-run/node";
+// import { Form, useActionData } from "@remix-run/react";
+// import { tokenCookie } from "app/utils/cookies";
+// import { login } from "~/services/authService";
 import loginImage from "../../assets/images/login.svg";
-import { useState, useEffect } from "react";
+import { FaGoogle, FaFacebook } from "react-icons/fa"; // Importa los íconos de Google y Facebook
+// import { useState, useEffect } from "react";
 
 // Action function para validar y guardar la cookie del token
+/*
 export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const email = formData.get("email");
@@ -32,11 +34,13 @@ export const action = async ({ request }: { request: Request }) => {
     return json({ error: errorMessage }, { status: 500 });
   }
 };
+*/
 
 export default function FormLogin() {
-  const actionData = useActionData<{ error?: string }>();
+  // const actionData = useActionData<{ error?: string }>();
 
   // Estados para credenciales y checkbox de "Recordarme"
+  /*
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [rememberChecked, setRememberChecked] = useState(false);
@@ -62,65 +66,96 @@ export default function FormLogin() {
       localStorage.removeItem("rememberedCredentials");
     }
   };
+  */
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gray-100">
-      <div className="md:w-1/2 flex justify-center">
-        <img src={loginImage} alt="Login" className="w-3/4 md:w-full" />
-      </div>
-      <div className="md:w-1/2 bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-welcome">Bienvenido a tu</h1>
-        <h2 className="text-bank">Banco de Oportunidades</h2>
-        <Form method="post" onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">Email</label>
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={emailValue}
-              onChange={(e) => setEmailValue(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="example@gmail.com"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              value={passwordValue}
-              onChange={(e) => setPasswordValue(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg"
-              placeholder="********"
-            />
-          </div>
-          {actionData?.error && <p className="text-red-500 mb-4">{actionData.error}</p>}
-          <div className="flex items-center justify-between mb-4">
-            <label className="flex items-center text-black">
+    <section className="login-section flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col md:flex-row items-center justify-center w-full h-full">
+        {/* Imagen */}
+        <div className="flex justify-center items-center h-[800px] md:w-2/5">
+          <img
+            src={loginImage}
+            alt="Login"
+            className="max-w-full h-full object-contain"
+          />
+        </div>
+
+        <div className="w-full md:w-2/5 bg-white p-8 rounded shadow-2xl mb-8 md:mb-0 md:ml-4 min-h-[700px] flex items-center justify-center">
+          <form method="post" className="w-full p-4">
+            <h1 className="text-2xl font-bold text-center mb-2 text-black">
+              Bienvenido a tu
+            </h1>
+            <h2 className="text-xl font-bold text-center mb-6 text-[#2C395B]">
+              Banco de Oportunidades
+            </h2>
+
+            {/* Botones de ingreso con Google y Facebook */}
+            <div className="flex flex-col gap-4 mb-6">
+              <button
+                type="button"
+                className="flex items-center justify-center w-full bg-white border border-gray-300 text-gray-700 py-3 px-5 rounded hover:bg-gray-100 text-lg"
+              >
+                <FaGoogle className="h-6 w-6 mr-2 text-red-500" />
+                Ingresa con Google
+              </button>
+              <button
+                type="button"
+                className="flex items-center justify-center w-full bg-[#1877F2] text-white py-3 px-5 rounded hover:bg-[#145dbf] text-lg"
+              >
+                <FaFacebook className="h-6 w-6 mr-2" />
+                Ingresa con Facebook
+              </button>
+              <div className="flex items-center justify-center my-4">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="mx-4 text-gray-500">o</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+            </div>
+
+            {/* Campos del formulario */}
+            <div className="relative mb-4 flex items-center">
               <input
-                type="checkbox"
-                className="mr-2"
-                name="remember"
-                checked={rememberChecked}
-                onChange={(e) => setRememberChecked(e.target.checked)}
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Correo Electrónico"
+                className="w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
-              Recordarme
-            </label>
-            <a href="#" className="text-custom-color hover:underline">Olvidé mi contraseña</a>
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-custom-color text-white py-2 px-4 rounded hover:bg-custom-color"
-          >
-            Login
-          </button>
-        </Form>
-        <p className="text-center mt-4">
-          <span className="text-black">¿No tienes una cuenta?</span> <a href="/registro" className="text-custom-color hover:underline">Regístrate</a>
-        </p>
+            </div>
+
+            <div className="relative mb-4 flex items-center">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Contraseña"
+                className="w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </div>
+
+            <div className="flex items-center justify-between mb-4">
+              <label className="flex items-center text-black">
+                <input
+                  type="checkbox"
+                  className="mr-2"
+                  name="remember"
+                />
+                Recordarme
+              </label>
+              <a href="#" className="text-custom-color hover:underline">Olvidé mi contraseña</a>
+            </div>
+
+            <button
+              type="submit"
+              className="w-3/4 bg-[#FFBA08] text-white py-3 px-5 rounded hover:bg-yellow-500 mx-auto block text-lg"
+            >
+              Ingresar
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
