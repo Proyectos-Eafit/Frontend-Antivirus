@@ -1,5 +1,6 @@
 import { Outlet } from "@remix-run/react";
 import ServiciosSection from "app/routes/Servicios/ServiciosSection";
+import Oportunidades from "~/components/Oportunidades";
 export default function Index() {
   return (
     <div>
@@ -9,7 +10,7 @@ export default function Index() {
       <Outlet />
         
       </div>
-      <Oportunidades />
+      <Oportunidades/>
     </div>
   );
 }
