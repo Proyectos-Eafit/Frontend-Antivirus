@@ -198,7 +198,9 @@ export default function FilterSearch({ onFilter }: { onFilter: Function }) {
               type="reset"
               className="px-4 py-2 border border-[#D9D9D9] rounded"
             >
+              <a href="/novedades">
               Limpiar
+              </a>
             </button>
           </div>
         </div>

@@ -12,8 +12,8 @@ type CardProps = {
   description: string;
   buttonLink: string;
   location: string;
-  oportunity_type: string,
-  sector: string,
+  oportunity_type: string;
+  sector: string;
 };
 
 export const loader: LoaderFunction = async () => {
@@ -23,6 +23,8 @@ export const loader: LoaderFunction = async () => {
 export default function NovedadesLayout() {
   const cards = useLoaderData<CardProps[]>();
   const [filteredCards, setFilteredCards] = useState<CardProps[]>(cards);
+  const [selectedCard, setSelectedCard] = useState<CardProps | null>(null);
+  const [visibleCards, setVisibleCards] = useState<number>(4);
 
   const handleFilter = (filters: {
     query: string;
@@ -45,8 +47,8 @@ export default function NovedadesLayout() {
     });
 
     setFilteredCards(filtered);
+    setVisibleCards(4);
   };
-
 
   return (
     <div className="text-gray-800 flex flex-col items-center justify-center text-center">
@@ -63,19 +65,55 @@ export default function NovedadesLayout() {
         ¡Oportunidades para estudiar!
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-12">
+      {filteredCards.length === 0 ? (
+        <p className="text-gray-500 text-lg py-10">
+          No se encontraron oportunidades.
+        </p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-12">
+            {filteredCards.slice(0, visibleCards).map((card, index) => (
+              <Cards
+                key={index}
+                image={card.image}
+                title={card.title}
+                description={card.description}
+                buttonLink={card.buttonLink}
+                onClick={() => setSelectedCard(card)}
+              />
+            ))}
+          </div>
 
-        {filteredCards.map((card, index) => (
-          <Cards
-            key={index}
-            image={card.image}
-            title={card.title}
-            description={card.description}
-            buttonLink={card.buttonLink}
-          />
-        ))}
-      </div>
+          {visibleCards < filteredCards.length && (
+            <button
+              className="mb-6 px-6 py-3 bg-[#FAA307] text-white font-bold rounded"
+              onClick={() => setVisibleCards((prev) => prev + 6)}
+            >
+              ▼ Mostrar más resultados
+            </button>
+          )}
+        </>
+      )}
 
+      {selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-xl font-bold">{selectedCard.title}</h2>
+            <img
+              src={selectedCard.image}
+              alt={selectedCard.title}
+              className="w-full h-40 object-cover mt-4"
+            />
+            <p className="mt-4">{selectedCard.description}</p>
+            <button
+              className="mt-4 px-4 py-2 bg-[#FAA307] text-white rounded"
+              onClick={() => setSelectedCard(null)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

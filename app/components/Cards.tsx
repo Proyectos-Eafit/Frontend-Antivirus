@@ -5,6 +5,7 @@ type CardProps = {
   title: string;
   description: string;
   buttonLink: string;
+  onClick: () => void;
 };
 
 export default function Card({
@@ -12,6 +13,7 @@ export default function Card({
   title,
   description,
   buttonLink,
+  onClick
 }: CardProps) {
   return (
     <div className="bg-white shadow-lg rounded-sm w-[450px] h-80 overflow-hidden text-center flex flex-col">
@@ -34,7 +36,8 @@ export default function Card({
           {description}
         </div>
         <div className="flex flex-row-reverse text-[#faa307] font-bold">
-          <button>
+          <button
+          onClick={onClick}>
             ... ver más
           </button>
         </div>
