@@ -1,72 +1,107 @@
-// import { json, redirect } from "@remix-run/node";
-// import { Form, useActionData } from "@remix-run/react";
-// import { tokenCookie } from "app/utils/cookies";
-// import { login } from "~/services/authService";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 import loginImage from "../../assets/images/login.svg";
-import { FaGoogle, FaFacebook } from "react-icons/fa"; // Importa los íconos de Google y Facebook
-// import { useState, useEffect } from "react";
-
-// Action function para validar y guardar la cookie del token
-/*
-export const action = async ({ request }: { request: Request }) => {
-  const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-
-  if (!email || !password) {
-    return json({ error: "Todos los campos son obligatorios" }, { status: 400 });
-  }
-
-  try {
-    const normalizedEmail = email.toString().toLowerCase();
-    const data = await login(normalizedEmail, password.toString());
-    const token = data.token.replace(/['"]+/g, "");
-    // Obtiene el valor del checkbox "Recordarme"
-    const remember = formData.get("remember");
-    const cookieOptions = remember ? { maxAge: 60 * 60 * 24 * 30 } : {};
-    return redirect("/novedades", {
-      headers: {
-        "Set-Cookie": await tokenCookie.serialize(token, cookieOptions),
-      },
-    });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Error de conexión con la API";
-    return json({ error: errorMessage }, { status: 500 });
-  }
-};
-*/
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
 export default function FormLogin() {
-  // const actionData = useActionData<{ error?: string }>();
+  const navigate = useNavigate();
 
-  // Estados para credenciales y checkbox de "Recordarme"
-  /*
-  const [emailValue, setEmailValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
-  const [rememberChecked, setRememberChecked] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    remember: false,
+  });
 
+  const [errors, setErrors] = useState({
+    email: false,
+    password: false,
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  // Cargar credenciales guardadas si "Recordar" está activado
   useEffect(() => {
-    const stored = localStorage.getItem("rememberedCredentials");
-    if (stored) {
-      try {
-        const creds = JSON.parse(stored);
-        if (creds.email) setEmailValue(creds.email);
-        if (creds.password) setPasswordValue(creds.password);
-        setRememberChecked(true);
-      } catch (e) {
-        console.error("Error parsing remembered credentials:", e);
-      }
+    const savedEmail = localStorage.getItem("email");
+    const savedPassword = localStorage.getItem("password");
+    if (savedEmail && savedPassword) {
+      setFormData({
+        email: savedEmail,
+        password: savedPassword,
+        remember: true,
+      });
     }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    if (rememberChecked) {
-      localStorage.setItem("rememberedCredentials", JSON.stringify({ email: emailValue, password: passwordValue }));
-    } else {
-      localStorage.removeItem("rememberedCredentials");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+    setErrors({ ...errors, [name]: false });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validación de campos vacíos
+    const newErrors = {
+      email: formData.email.trim() === "",
+      password: formData.password.trim() === "",
+    };
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some((error) => error)) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post("http://localhost:5281/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 200 && response.data.token) {
+        console.log("Inicio de sesión exitoso:", response.data);
+        alert("Inicio de sesión exitoso");
+
+        // Guarda el token en las cookies con una duración de 20 minutos
+        Cookies.set("token", response.data.token, { expires: 1 / 72 }); // 20 minutos
+
+        // Si "Recordar" está activado, guarda las credenciales en localStorage
+        if (formData.remember) {
+          localStorage.setItem("email", formData.email);
+          localStorage.setItem("password", formData.password);
+        } else {
+          localStorage.removeItem("email");
+          localStorage.removeItem("password");
+        }
+
+        // Redirige al usuario a la página de novedades
+        navigate("/novedades");
+      } else {
+        alert("Hubo un problema al iniciar sesión.");
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.error("Error en la respuesta del backend:", error.response.data);
+        alert(`Error: ${error.response.data.message || "Credenciales incorrectas"}`);
+      } else if (error.request) {
+        console.error("No se recibió respuesta del backend:", error.request);
+        alert("No se pudo conectar con el servidor. Verifica tu conexión.");
+      } else {
+        console.error("Error al configurar la solicitud:", error.message);
+        alert("Ocurrió un error inesperado. Intenta nuevamente.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
-  */
 
   return (
     <section className="login-section flex flex-col items-center justify-center min-h-screen">
@@ -81,7 +116,7 @@ export default function FormLogin() {
         </div>
 
         <div className="w-full md:w-2/5 bg-white p-8 rounded shadow-2xl mb-8 md:mb-0 md:ml-4 min-h-[700px] flex items-center justify-center">
-          <form method="post" className="w-full p-4">
+          <form onSubmit={handleSubmit} className="w-full p-4">
             <h1 className="text-2xl font-bold text-center mb-2 text-black">
               Bienvenido a tu
             </h1>
@@ -119,7 +154,11 @@ export default function FormLogin() {
                 id="email"
                 name="email"
                 placeholder="Correo Electrónico"
-                className="w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formData.email}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                  errors.email ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+                }`}
                 required
               />
             </div>
@@ -130,7 +169,11 @@ export default function FormLogin() {
                 id="password"
                 name="password"
                 placeholder="Contraseña"
-                className="w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formData.password}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
+                  errors.password ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
+                }`}
                 required
               />
             </div>
@@ -141,17 +184,19 @@ export default function FormLogin() {
                   type="checkbox"
                   className="mr-2"
                   name="remember"
+                  checked={formData.remember}
+                  onChange={handleChange}
                 />
                 Recordarme
               </label>
-              <a href="#" className="text-custom-color hover:underline">Olvidé mi contraseña</a>
             </div>
 
             <button
               type="submit"
               className="w-3/4 bg-[#FFBA08] text-white py-3 px-5 rounded hover:bg-yellow-500 mx-auto block text-lg"
+              disabled={loading}
             >
-              Ingresar
+              {loading ? "Cargando..." : "Ingresar"}
             </button>
           </form>
         </div>

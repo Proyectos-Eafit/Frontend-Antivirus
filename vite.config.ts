@@ -21,4 +21,9 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  resolve: {
+    alias: {
+      "remix:manifest": "/virtual/remix-manifest", 
+    },
+  },
 });

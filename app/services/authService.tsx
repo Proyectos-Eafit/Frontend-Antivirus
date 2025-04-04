@@ -4,7 +4,6 @@
  * @param {string} password - Contraseña del usuario.
  * @returns {Promise<Object>} - Datos del usuario autenticado.
  */
-/*
 export async function login(correo: string, password: string): Promise<{ token: string }> {
   try {
     const response = await fetch("http://localhost:5281/api/auth/login", {
@@ -14,14 +13,15 @@ export async function login(correo: string, password: string): Promise<{ token: 
     });
 
     if (!response.ok) {
-      throw new Error("Credenciales incorrectas");
+      // Intenta obtener el mensaje de error del backend
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Credenciales incorrectas");
     }
 
-    return await response.json();
+    return await response.json(); // Devuelve el token del usuario autenticado
   } catch (error) {
     console.error("Error en la solicitud de inicio de sesión:", error);
     // Repropaga el error original para mantener el mensaje
     throw error;
   }
 }
-*/
