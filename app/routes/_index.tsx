@@ -1,11 +1,9 @@
-import { Outlet } from "@remix-run/react";
+import Inicio from "~/components/Inicio";
 
 export default function Index() {
   return (
-    <div>
-      <div>
-        <Outlet />
-      </div>
-    </div>
+    <main>
+      <Inicio />
+    </main>
   );
 }

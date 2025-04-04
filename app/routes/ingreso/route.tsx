@@ -2,7 +2,7 @@ import FormLogin, { action as formLoginAction } from "./formLogin";
 
 export const action = formLoginAction;
 
-export default function ingresoLayout() {
+export default function IngresoPage() {
   return (
     <div>
       <FormLogin />
