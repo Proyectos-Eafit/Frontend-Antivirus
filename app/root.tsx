@@ -2,10 +2,10 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/reac
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { tokenCookie } from "~/utils/cookies";
 import "./tailwind.css";
 import { lazy, Suspense } from "react";
 import LoadingComponent from "./components/Loading.component";
+import { AuthProvider } from "./utils/authCOntext"; // Importar el AuthProvider
 
 const Navbar = lazy(() => import("./components/Navbar"));
 const Footer = lazy(() => import("./components/Footer"));
@@ -24,16 +24,23 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const cookieHeader = request.headers.get("Cookie");
-  const token = (await tokenCookie.parse(cookieHeader)) || null;
+  try {
+    // Llama al backend para verificar si el usuario está autenticado
+    const response = await fetch("http://localhost:5281/api/auth/validate-token", {
+      headers: { Cookie: request.headers.get("Cookie") || "" },
+      credentials: "include", // Asegúrate de enviar cookies al backend
+    });
 
-  return json({ isAuthenticated: !!token });
+    // Si el backend devuelve 200, el usuario está autenticado
+    const isAuthenticated = response.ok;
+    return json({ isAuthenticated });
+  } catch (error) {
+    console.error("Error al verificar la autenticación:", error);
+    return json({ isAuthenticated: false });
+  }
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const data = useLoaderData<{ isAuthenticated?: boolean }>() || {};
-  const isAuthenticated = data.isAuthenticated ?? false;
-
   return (
     <html lang="en">
       <head>
@@ -43,16 +50,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-[#fafafa]">
-        <Suspense fallback={<LoadingComponent />}>
-          <Navbar isAuthenticated={isAuthenticated} />
-        </Suspense>
+        <AuthProvider>
+          <Suspense fallback={<LoadingComponent />}>
+            <Navbar />
+          </Suspense>
 
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        <Suspense fallback={<LoadingComponent />}>
-          <Footer />
-        </Suspense>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+          <Suspense fallback={<LoadingComponent />}>
+            <Footer />
+          </Suspense>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Cookies from "js-cookie";
 import loginImage from "../../assets/images/login.svg";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { useAuth } from "../../utils/authCOntext"; // Importar el contexto de autenticación
 
 export default function FormLogin() {
   const navigate = useNavigate();
+  const { login } = useAuth(); // Usar el contexto para manejar la autenticación
 
   const [formData, setFormData] = useState({
     email: "",
@@ -22,7 +23,6 @@ export default function FormLogin() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Cargar credenciales guardadas si "Recordar" está activado
   useEffect(() => {
     const savedEmail = localStorage.getItem("email");
     const savedPassword = localStorage.getItem("password");
@@ -42,13 +42,12 @@ export default function FormLogin() {
       [name]: type === "checkbox" ? checked : value,
     });
     setErrors({ ...errors, [name]: false });
-    setErrorMessage(null); // Limpia el mensaje de error al cambiar los campos
+    setErrorMessage(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validación de campos vacíos
     const newErrors = {
       email: formData.email.trim() === "",
       password: formData.password.trim() === "",
@@ -63,22 +62,23 @@ export default function FormLogin() {
     setLoading(true);
 
     try {
-      console.log("Datos enviados:", formData); // Verifica los datos enviados
+      const response = await axios.post(
+        "http://localhost:5281/api/auth/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-      const response = await axios.post("http://localhost:5281/api/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      });
+      if (response.status === 200) {
+        const { role, token } = response.data; // El backend debe devolver el rol y el token del usuario
 
-      console.log("Respuesta de la API:", response.data); // Verifica la respuesta de la API
+        // Guardar el token en el almacenamiento local o en cookies si es necesario
+        localStorage.setItem("authToken", token);
 
-      if (response.status === 200 && response.data.token) {
-        console.log("Token recibido:", response.data.token); // Verifica el token recibido
-
-        // Inicio de sesión exitoso
-        Cookies.set("token", response.data.token, { expires: 1 / 72 }); // 20 minutos
-
-        // Guarda las credenciales si "Recordar" está activado
         if (formData.remember) {
           localStorage.setItem("email", formData.email);
           localStorage.setItem("password", formData.password);
@@ -87,22 +87,28 @@ export default function FormLogin() {
           localStorage.removeItem("password");
         }
 
-        // Redirige al usuario a la página de novedades
-        navigate("/novedades");
+        // Actualizar el contexto global con el rol del usuario
+        login(role);
+
+        // Redirige según el rol
+        if (role === "admin") {
+          navigate("/admin"); // Redirige al componente de administración
+        } else if (role === "superadmin") {
+          navigate("/super-admin"); // Redirige al componente de gestión de usuarios
+        } else if (role === "user") {
+          navigate("/novedades"); // Redirige al componente de novedades
+        } else {
+          setErrorMessage("Rol desconocido. Contacta al administrador.");
+        }
       } else {
         setErrorMessage("Hubo un problema al iniciar sesión.");
       }
     } catch (error: any) {
-      console.error("Error completo:", error); // Log completo del error
-
       if (error.response) {
-        console.error("Error en la respuesta:", error.response.data); // Detalles de la respuesta
         setErrorMessage(error.response.data.message || "Credenciales incorrectas");
       } else if (error.request) {
-        console.error("Error en la solicitud:", error.request); // Detalles de la solicitud
         setErrorMessage("No se pudo conectar con el servidor. Verifica tu conexión.");
       } else {
-        console.error("Error desconocido:", error.message); // Otros errores
         setErrorMessage("Ocurrió un error inesperado. Intenta nuevamente.");
       }
     } finally {
@@ -113,7 +119,6 @@ export default function FormLogin() {
   return (
     <section className="login-section flex flex-col items-center justify-center min-h-screen">
       <div className="flex flex-col md:flex-row items-center justify-center w-full h-full">
-        {/* Imagen */}
         <div className="flex justify-center items-center h-[800px] md:w-2/5">
           <img
             src={loginImage}
@@ -131,7 +136,6 @@ export default function FormLogin() {
               Banco de Oportunidades
             </h2>
 
-            {/* Botones de ingreso con Google y Facebook */}
             <div className="flex flex-col gap-4 mb-6">
               <button
                 type="button"
@@ -154,12 +158,10 @@ export default function FormLogin() {
               </div>
             </div>
 
-            {/* Mensaje de error */}
             {errorMessage && (
               <p className="text-red-500 text-center mb-4">{errorMessage}</p>
             )}
 
-            {/* Campos del formulario */}
             <div className="relative mb-4 flex items-center">
               <input
                 type="email"

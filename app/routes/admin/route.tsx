@@ -1,8 +1,5 @@
+import Admin from "../../components/Admin";
 
-export default function inicioLayout(){
-  return (
-    <div>
-      <h2>Pagina principal admin</h2>
-    </div>
-  )
+export default function AdminPage() {
+  return <Admin />;
 }
