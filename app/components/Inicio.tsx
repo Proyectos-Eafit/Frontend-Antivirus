@@ -29,7 +29,7 @@ export default function Inicio() {
     // Obtener las oportunidades desde el backend
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get("http://localhost:5281/api/Opportunities");
+        const response = await axios.get("http://3.142.142.153:5000/api/Opportunities");
         setOpportunities(response.data);
       } catch (error) {
         console.error("Error al obtener las oportunidades:", error);
@@ -41,7 +41,7 @@ export default function Inicio() {
     // Obtener los servicios desde el backend
     const fetchServices = async () => {
       try {
-        const response = await axios.get("http://localhost:5281/api/Services");
+        const response = await axios.get("http://3.142.142.153:5000/api/Services");
         setServices(response.data);
       } catch (error) {
         console.error("Error al obtener los servicios:", error);

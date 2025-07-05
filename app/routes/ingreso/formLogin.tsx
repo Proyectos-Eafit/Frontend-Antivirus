@@ -7,7 +7,7 @@ import { useAuth } from "../../utils/authCOntext"; // Importar el contexto de au
 
 export default function FormLogin() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Usar el contexto para manejar la autenticación
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -62,22 +62,20 @@ export default function FormLogin() {
     setLoading(true);
 
     try {
+    
       const response = await axios.post(
-        "http://localhost:5281/api/auth/login",
+        "http://3.142.142.153:5000/api/auth/login",
         {
           email: formData.email,
           password: formData.password,
-        },
-        {
-          withCredentials: true,
         }
       );
 
       if (response.status === 200) {
-        const { role, token } = response.data; // El backend debe devolver el rol y el token del usuario
+        const { role, token } = response.data;
 
-        // Guardar el token en el almacenamiento local o en cookies si es necesario
         localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", role);
 
         if (formData.remember) {
           localStorage.setItem("email", formData.email);
@@ -87,16 +85,14 @@ export default function FormLogin() {
           localStorage.removeItem("password");
         }
 
-        // Actualizar el contexto global con el rol del usuario
         login(role);
 
-        // Redirige según el rol
-        if (role === "admin") {
-          navigate("/admin"); // Redirige al componente de administración
+        if (role === "Admin" || role === 2) {
+          navigate("/admin");
+        } else if (role === "Usuario" || role === 1) {
+          navigate("/novedades");
         } else if (role === "superadmin") {
-          navigate("/super-admin"); // Redirige al componente de gestión de usuarios
-        } else if (role === "user") {
-          navigate("/novedades"); // Redirige al componente de novedades
+          navigate("/super-admin");
         } else {
           setErrorMessage("Rol desconocido. Contacta al administrador.");
         }
@@ -140,6 +136,7 @@ export default function FormLogin() {
               <button
                 type="button"
                 className="flex items-center justify-center w-full bg-white border border-gray-300 text-gray-700 py-3 px-5 rounded hover:bg-gray-100 text-lg"
+                disabled
               >
                 <FaGoogle className="h-6 w-6 mr-2 text-red-500" />
                 Ingresa con Google
@@ -147,6 +144,7 @@ export default function FormLogin() {
               <button
                 type="button"
                 className="flex items-center justify-center w-full bg-[#1877F2] text-white py-3 px-5 rounded hover:bg-[#145dbf] text-lg"
+                disabled
               >
                 <FaFacebook className="h-6 w-6 mr-2" />
                 Ingresa con Facebook

@@ -53,7 +53,7 @@ export default function Novedades() {
   useEffect(() => {
     const fetchOpportunities = async () => {
       try {
-        const response = await axios.get("http://localhost:5281/api/Opportunities", {
+        const response = await axios.get("http://3.142.142.153:5000/api/Opportunities", {
           withCredentials: true, // Asegúrate de enviar cookies al servidor
         });
         setOpportunities(response.data);

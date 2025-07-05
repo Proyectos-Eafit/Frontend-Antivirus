@@ -26,7 +26,7 @@ export const links: LinksFunction = () => [
 export const loader: LoaderFunction = async ({ request }) => {
   try {
     // Llama al backend para verificar si el usuario está autenticado
-    const response = await fetch("http://localhost:5281/api/auth/validate-token", {
+    const response = await fetch("http://3.142.142.153:5000/api/auth/validate-token", {
       headers: { Cookie: request.headers.get("Cookie") || "" },
       credentials: "include", // Asegúrate de enviar cookies al backend
     });

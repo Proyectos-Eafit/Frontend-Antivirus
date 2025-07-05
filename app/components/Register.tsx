@@ -6,18 +6,18 @@ import axios from "axios";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    firstName: "",
+    name: "",
     lastName: "",
-    birthDate: "",
+    dateBirth: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    firstName: false,
+    name: false,
     lastName: false,
-    birthDate: false,
+    dateBirth: false,
     email: false,
     password: false,
     confirmPassword: false,
@@ -25,20 +25,19 @@ export default function Register() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [benefits, setBenefits] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [benefits, setBenefits] = useState([]); // Estado para los beneficios
-
-  // Obtener los beneficios desde la API
   useEffect(() => {
     const fetchBenefits = async () => {
       try {
-        const response = await axios.get("http://localhost:5281/api/Benefits");
-        setBenefits(response.data); // Guardar los beneficios en el estado
+        const response = await axios.get("http://3.142.142.153:5000/api/Benefits");
+        setBenefits(response.data);
       } catch (error) {
+        // Solo loguea, no bloquea
         console.error("Error al obtener los beneficios:", error);
       }
     };
-
     fetchBenefits();
   }, []);
 
@@ -52,49 +51,41 @@ export default function Register() {
     e.preventDefault();
 
     const newErrors = {
-      firstName: formData.firstName.trim() === "",
+      name: formData.name.trim() === "",
       lastName: formData.lastName.trim() === "",
-      birthDate: formData.birthDate.trim() === "",
+      dateBirth: formData.dateBirth.trim() === "",
       email: formData.email.trim() === "",
       password: formData.password.trim() === "",
       confirmPassword: formData.confirmPassword.trim() === "" || formData.password !== formData.confirmPassword,
     };
-
     setErrors(newErrors);
 
-    if (Object.values(newErrors).some((error) => error)) {
-      return;
-    }
+    if (Object.values(newErrors).some((error) => error)) return;
+
+    setLoading(true);
 
     const userPayload = {
-      id: 0, // El backend puede ignorar este campo si no es necesario
-      name: formData.firstName,
-      lastName: formData.lastName,
       email: formData.email,
       password: formData.password,
-      dateBirth: formData.birthDate,
+      name: formData.name,
+      lastName: formData.lastName,
+      dateBirth: formData.dateBirth,
     };
 
     try {
-      // Consumir el endpoint de registro
-      const response = await axios.post("http://localhost:5281/api/auth/register", userPayload);
-
-      if (response.status === 200) {
-        alert("Usuario registrado exitosamente.");
-      } else {
-        alert("Hubo un problema al registrar el usuario.");
-      }
+      await axios.post("http://3.142.142.153:5000/api/auth/register", userPayload);
+      alert("Usuario registrado exitosamente. Ahora puedes ingresar.");
+      window.location.href = "/ingreso";
     } catch (error: any) {
       if (error.response) {
-        console.error("Error en la respuesta del backend:", error.response.data);
-        alert(`Error: ${error.response.data.message || "Hubo un problema al registrar el usuario"}`);
+        alert(`Error: ${error.response.data?.message || "Hubo un problema al registrar el usuario"}`);
       } else if (error.request) {
-        console.error("No se recibió respuesta del backend:", error.request);
         alert("No se pudo conectar con el servidor. Verifica tu conexión.");
       } else {
-        console.error("Error al configurar la solicitud:", error.message);
         alert("Ocurrió un error inesperado. Intenta nuevamente.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,24 +97,21 @@ export default function Register() {
             <h1 className="text-2xl font-bold text-center mb-6 text-black">
               ¿Listo para encontrar tu próxima <span className="text-[#2C395B]">oportunidad?</span> <span className="wave">👋</span>
             </h1>
-
-            {/* Campos del formulario */}
+            {/* Campos */}
             <div className="relative mb-4 flex items-center">
               <UserIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
                 type="text"
-                id="firstName"
-                name="firstName"
+                id="name"
+                name="name"
                 placeholder="Nombre"
-                value={formData.firstName}
+                value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.firstName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.name ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
             </div>
-
             <div className="relative mb-4 flex items-center">
               <UserIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
@@ -133,29 +121,25 @@ export default function Register() {
                 placeholder="Apellido"
                 value={formData.lastName}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.lastName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.lastName ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
             </div>
-
             <div className="relative mb-4 flex items-center">
               <CalendarIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
                 type="date"
-                id="birthDate"
-                name="birthDate"
+                id="dateBirth"
+                name="dateBirth"
                 placeholder="Fecha de Nacimiento"
-                value={formData.birthDate}
+                value={formData.dateBirth}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.birthDate ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.dateBirth ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
             </div>
-
             <div className="relative mb-4 flex items-center">
               <EnvelopeIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
@@ -165,13 +149,11 @@ export default function Register() {
                 placeholder="Correo Electrónico"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.email ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.email ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
             </div>
-
             <div className="relative mb-4 flex items-center">
               <LockClosedIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
@@ -181,20 +163,20 @@ export default function Register() {
                 placeholder="Contraseña"
                 value={formData.password}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.password ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.password ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
+                disabled={loading}
               >
                 {showPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
               </button>
             </div>
-
             <div className="relative mb-4 flex items-center">
               <LockClosedIcon className="h-6 w-6 text-gray-500 mr-3" />
               <input
@@ -204,30 +186,29 @@ export default function Register() {
                 placeholder="Confirmar Contraseña"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${
-                  errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"
-                }`}
+                className={`w-full px-4 py-3 border rounded bg-[#ececec] text-black text-lg focus:outline-none focus:ring-2 ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "focus:ring-blue-500"}`}
                 required
+                disabled={loading}
               />
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="absolute right-3 top-3 text-gray-500 hover:text-blue-500 flex items-center"
+                disabled={loading}
               >
                 {showConfirmPassword ? <EyeSlashIcon className="h-6 w-6" /> : <EyeIcon className="h-6 w-6" />}
               </button>
             </div>
-
             <button
               type="submit"
-              className="w-3/4 bg-[#FFBA08] text-white py-3 px-5 rounded hover:bg-yellow-500 mx-auto block text-lg"
+              className={`w-3/4 bg-[#FFBA08] text-white py-3 px-5 rounded hover:bg-yellow-500 mx-auto block text-lg ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={loading}
             >
-              Crear Cuenta
+              {loading ? "Registrando..." : "Crear Cuenta"}
             </button>
           </form>
         </div>
-
-        {/* Imagen */}
         <div className="flex justify-center items-center h-[700px]">
           <img
             src={airplaneRegister}
@@ -236,17 +217,15 @@ export default function Register() {
           />
         </div>
       </div>
-      
-      {/* Sección de beneficios */}
+      {/* Beneficios */}
       <div className="w-full py-8 px-4">
         <h2 className="text-2xl font-bold text-center mt-24 mb-24 text-[#2C395B]">
           ¡Obtén los siguientes beneficios!
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-36 mb-20">
-          {benefits.map((benefit: any) => (
+          {benefits.map((benefit) => (
             <div key={benefit.id} className="flex flex-col">
               <div>
-                {/* Imagen del beneficio */}
                 {benefit.image_url && (
                   <img
                     src={benefit.image_url}
