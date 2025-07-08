@@ -1,12 +1,21 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
 import "./tailwind.css";
+import slickStylesHref from "./styles/slick.css?url";
+import slickThemeHref from "./styles/slick-theme.css?url";
 import { lazy, Suspense } from "react";
 import LoadingComponent from "./components/Loading.component";
 import { AuthProvider } from "./utils/authCOntext"; // Importar el AuthProvider
 
+
+// IMPORTS DINÁMICOS CORRECTOS
 const Navbar = lazy(() => import("./components/Navbar"));
 const Footer = lazy(() => import("./components/Footer"));
 
@@ -21,12 +30,14 @@ export const links: LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap",
   },
+  { rel: "stylesheet", href: slickStylesHref },
+  { rel: "stylesheet", href: slickThemeHref },
 ];
 
 export const loader: LoaderFunction = async ({ request }) => {
   try {
     // Llama al backend para verificar si el usuario está autenticado
-    const response = await fetch("http://localhost:5281/api/auth/validate-token", {
+    const response = await fetch("http://3.142.142.153:5000/api/auth/validate-token", {
       headers: { Cookie: request.headers.get("Cookie") || "" },
       credentials: "include", // Asegúrate de enviar cookies al backend
     });
@@ -49,13 +60,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-[#fafafa]">
+      <body className="bg-[#fafafa] min-h-screen">
         <AuthProvider>
           <Suspense fallback={<LoadingComponent />}>
             <Navbar />
           </Suspense>
 
-          {children}
+          <main>
+            {children}
+          </main>
+
           <ScrollRestoration />
           <Scripts />
           <Suspense fallback={<LoadingComponent />}>
@@ -67,6 +81,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Para Remix, normalmente exportas App como el componente principal:
 export default function App() {
   return <Outlet />;
 }

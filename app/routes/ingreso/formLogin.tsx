@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import loginImage from "../../assets/images/login.svg";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
-import { useAuth } from "../../utils/authCOntext"; // Importar el contexto de autenticación
+import { useAuth } from "../../utils/authCOntext";
 
 export default function FormLogin() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // Usar el contexto para manejar la autenticación
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -45,6 +45,44 @@ export default function FormLogin() {
     setErrorMessage(null);
   };
 
+  // FUNCIÓN para intentar login como usuario y si falla, como admin
+  const loginWithUserOrAdmin = async () => {
+    // 1. Intentar como usuario normal
+    try {
+      const response = await axios.post(
+        "http://3.142.142.153:5000/api/users/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        }
+      );
+      return { ...response, userType: "Usuario" }; // Si funciona, retorna la respuesta
+    } catch (error: any) {
+      // Si NO fue por "el usuario no tiene rol válido", intenta como admin
+      if (
+        error?.response?.data?.message &&
+        error.response.data.message.includes("El usuario no tiene rol válido.")
+      ) {
+        // 2. Intentar como admin
+        try {
+          const adminResponse = await axios.post(
+            "http://3.142.142.153:5000/api/admins/login",
+            {
+              email: formData.email,
+              password: formData.password,
+            }
+          );
+          return { ...adminResponse, userType: "Admin" };
+        } catch (adminError: any) {
+          // Si también falla como admin, lanzamos el error original
+          throw adminError;
+        }
+      } else {
+        throw error;
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -62,22 +100,13 @@ export default function FormLogin() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5281/api/auth/login",
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
+      const response = await loginWithUserOrAdmin();
       if (response.status === 200) {
-        const { role, token } = response.data; // El backend debe devolver el rol y el token del usuario
+        // Trae el user, role y token del backend
+        const { role, token, user } = response.data;
 
-        // Guardar el token en el almacenamiento local o en cookies si es necesario
         localStorage.setItem("authToken", token);
+        localStorage.setItem("userRole", role);
 
         if (formData.remember) {
           localStorage.setItem("email", formData.email);
@@ -87,16 +116,14 @@ export default function FormLogin() {
           localStorage.removeItem("password");
         }
 
-        // Actualizar el contexto global con el rol del usuario
-        login(role);
+        login({ ...user, role }, token);
 
-        // Redirige según el rol
-        if (role === "admin") {
-          navigate("/admin"); // Redirige al componente de administración
+        if (role === "Admin" || role === 2) {
+          navigate("/admin");
+        } else if (role === "Usuario" || role === 1) {
+          navigate("/novedades");
         } else if (role === "superadmin") {
-          navigate("/super-admin"); // Redirige al componente de gestión de usuarios
-        } else if (role === "user") {
-          navigate("/novedades"); // Redirige al componente de novedades
+          navigate("/super-admin");
         } else {
           setErrorMessage("Rol desconocido. Contacta al administrador.");
         }
@@ -140,6 +167,7 @@ export default function FormLogin() {
               <button
                 type="button"
                 className="flex items-center justify-center w-full bg-white border border-gray-300 text-gray-700 py-3 px-5 rounded hover:bg-gray-100 text-lg"
+                disabled
               >
                 <FaGoogle className="h-6 w-6 mr-2 text-red-500" />
                 Ingresa con Google
@@ -147,6 +175,7 @@ export default function FormLogin() {
               <button
                 type="button"
                 className="flex items-center justify-center w-full bg-[#1877F2] text-white py-3 px-5 rounded hover:bg-[#145dbf] text-lg"
+                disabled
               >
                 <FaFacebook className="h-6 w-6 mr-2" />
                 Ingresa con Facebook

@@ -1,21 +1,59 @@
 import { Link, useLocation } from "@remix-run/react";
-import { FaSignOutAlt } from "react-icons/fa"; // Ícono de salir
+import { FaSignOutAlt, FaUserShield } from "react-icons/fa";
+import { UserCircleIcon } from "@heroicons/react/24/solid";
 import logo from "../assets/images/logo.svg";
 import btnLogin from "../assets/images/btnLogin.svg";
 import btnRegister from "../assets/images/btnRegister.svg";
-import { useAuth } from "../utils/authCOntext"; // Importar el contexto de autenticación
+import { useAuth } from "../utils/authCOntext";
 
 export default function Navbar() {
-  const location = useLocation(); // Obtiene la ruta actual
-  const { isAuthenticated, role, logout } = useAuth(); // Usar el contexto de autenticación
+  const location = useLocation();
+  const { isAuthenticated, role, user, logout } = useAuth();
+  const iconSize = 32;
 
-  // Manejar el cierre de sesión
   const handleLogout = () => {
     logout();
-    window.location.href = "/ingreso"; // Redirige al usuario al inicio de sesión
+    window.location.href = "/ingreso";
   };
 
-  // Verificar si estamos en vistas específicas
+  const getAvatar = () => {
+    if (user && user.imageUrl)
+      return (
+        <Link to="/profile" title="Editar perfil">
+          <img
+            src={user.imageUrl}
+            alt="avatar"
+            className="w-8 h-8 rounded-full object-cover border-2 border-blue-300 cursor-pointer"
+          />
+        </Link>
+      );
+    if (role && role.toLowerCase() === "admin")
+      return (
+        <Link to="/profile" title="Editar perfil">
+          <FaUserShield
+            size={iconSize}
+            className="text-blue-700 bg-white rounded-full border-2 border-blue-400 p-1 cursor-pointer"
+          />
+        </Link>
+      );
+    return (
+      <Link to="/profile" title="Editar perfil">
+        <UserCircleIcon
+          width={iconSize}
+          height={iconSize}
+          className="text-gray-400 bg-white rounded-full border-2 border-blue-300 cursor-pointer"
+        />
+      </Link>
+    );
+  };
+
+  const getFullName = () => {
+    if (!user) return "";
+    const name = user.name ? String(user.name) : "";
+    const lastName = user.lastName ? String(user.lastName) : "";
+    return `${name} ${lastName}`.trim();
+  };
+
   const isNovedadesPage = location.pathname === "/novedades";
   const isLoginPage = location.pathname === "/ingreso";
   const isRegisterPage = location.pathname === "/registro";
@@ -23,79 +61,88 @@ export default function Navbar() {
   return (
     <div>
       <nav className="relative flex">
+        {/* Background Gradient */}
         <div className="absolute top-4 bg-[linear-gradient(90deg,#00266B_19.38%,#4E6291_37.55%,#5F77AB_82.93%,#708BC6_96.28%)] h-16 w-full z-0"></div>
+        {/* IZQUIERDA */}
         <ul className="flex font-raleway font-bold text-white w-5/12 justify-evenly items-center z-10">
           <li>
-            <Link to="/">Inicio</Link>
+            <Link to="/" className="hover:underline underline-offset-4 transition-all">Inicio</Link>
           </li>
-          {!isNovedadesPage && (
-            <li>
-              <Link to="#oportunidades">Oportunidades</Link>
-            </li>
-          )}
           <li>
-            <Link to="#servicios">Servicio</Link>
+            <Link to="/oportunidades" className="hover:underline underline-offset-4 transition-all">Oportunidades</Link>
           </li>
-          {/* Mostrar el enlace de Novedades solo si el usuario está autenticado */}
+          <li>
+            <Link to="/servicios" className="hover:underline underline-offset-4 transition-all">Servicios</Link>
+          </li>
           {isAuthenticated && !isLoginPage && !isRegisterPage && (
             <li>
-              <Link to="/novedades">Novedades</Link>
+              <Link to="/novedades" className="hover:underline underline-offset-4 transition-all">Novedades</Link>
             </li>
           )}
         </ul>
+        {/* CENTRO */}
         <div className="w-2/12 flex justify-center z-10">
           <img className="w-28" src={logo} alt="logo" />
         </div>
-        <ul className="flex items-center justify-evenly z-10">
+        {/* DERECHA */}
+        <ul className="flex items-center justify-evenly z-10 min-w-[270px] font-raleway font-bold text-white">
           {isAuthenticated ? (
             <>
-              {/* Mostrar opciones solo para admin */}
-              {role === "admin" && (
+              {/* Opciones admin */}
+              {role && role.toLowerCase() === "admin" && (
                 <>
-                  {/* Botón de Administrar Contenido */}
                   <li>
                     <Link
                       to="/admin"
-                      className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                      className="px-4 py-2 hover:underline underline-offset-4 transition-all"
+                      style={{ color: "white" }}
                     >
                       Administrar Contenido
                     </Link>
                   </li>
-                  {/* Botón de Gestión de Usuarios */}
                   <li>
                     <Link
                       to="/super-admin"
-                      className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                      className="px-4 py-2 hover:underline underline-offset-4 transition-all"
+                      style={{ color: "white" }}
                     >
                       Gestión de Usuarios
                     </Link>
                   </li>
                 </>
               )}
-              {/* Botón de Cerrar Sesión */}
-              <li>
+              {/* Perfil pequeño y logout */}
+              <li className="flex items-center gap-2 ml-2">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                  className="flex items-center px-3 py-2 hover:underline underline-offset-4 transition-all font-bold"
+                  style={{ color: "#ff1744", background: "transparent", border: "none" }}
+                  title="Salir"
                 >
-                  <FaSignOutAlt className="mr-2" /> {/* Ícono de salir */}
-                  Salir
+                  <FaSignOutAlt className="mr-1" size={18} />
+                  <span className="hidden md:inline">Salir</span>
                 </button>
+                {getAvatar()}
+                <Link to="/profile" title="Editar perfil">
+                  <span className="text-xs text-white font-semibold max-w-[110px] truncate cursor-pointer">
+                    {getFullName()}
+                  </span>
+                </Link>
               </li>
             </>
           ) : (
             <>
               {!isLoginPage && (
-                <li className="mr-16">
+                <li className="mr-12">
                   <Link to="/ingreso">
-                    <img className="w-40" src={btnLogin} alt="btn" />
+                    <img className="w-32" src={btnLogin} alt="btn" />
                   </Link>
                 </li>
               )}
               {!isRegisterPage && (
-                <li className="ml-16">
+                <li className="ml-12">
                   <Link to="/registro">
-                    <img className="w-40" src={btnRegister} alt="btn" />
+                    <img className="w-32" src={btnRegister} alt="btn" />
                   </Link>
                 </li>
               )}

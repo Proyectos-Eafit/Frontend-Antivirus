@@ -43,7 +43,7 @@ export default function SuperAdmin() {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
 
-  const API_BASE_URL = "http://localhost:5281/api";
+  const API_BASE_URL = "http://3.142.142.153:5000/api";
 
   // Configurar Axios para incluir el token JWT
   const axiosInstance = axios.create({

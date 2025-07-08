@@ -16,7 +16,7 @@
 
 //   // Opcional: Verifica si el token es válido (puedes hacer una solicitud a tu API para validarlo)
 //   try {
-//     const response = await fetch("http://localhost:5281/api/auth/validate-token", {
+//     const response = await fetch("http://3.142.142.153:5000/api/auth/validate-token", {
 //       headers: {
 //         Authorization: `Bearer ${token}`,
 //       },
